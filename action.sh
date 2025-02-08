@@ -1,5 +1,8 @@
 #!/bin/bash
 set -x
+
+export OPENWRT_HOME="/mnt/openwrt"
+
 function cleanup() {
 	if [ -f /swapfile ]; then
 		sudo swapoff /swapfile
@@ -92,11 +95,11 @@ function build() {
 }
 
 function artifact() {
-	mkdir -p ./openwrt-r5s-squashfs-img
+	mkdir -p ./openwrt-r2s-squashfs-img
 	ls -hl ./openwrt/bin/targets/rockchip/armv8
-	cp ./openwrt/bin/targets/rockchip/armv8/*-squashfs-sysupgrade.img.gz ./openwrt-r5s-squashfs-img/
-	cp ./openwrt/bin/targets/rockchip/armv8/config.buildinfo ./openwrt-r5s-squashfs-img/
-	zip -r openwrt-r5s-squashfs-img.zip ./openwrt-r5s-squashfs-img
+	cp ./openwrt/bin/targets/rockchip/armv8/*-squashfs-sysupgrade.img.gz ./openwrt-r2s-squashfs-img/
+	cp ./openwrt/bin/targets/rockchip/armv8/config.buildinfo ./openwrt-r2s-squashfs-img/
+	zip -r openwrt-r2s-squashfs-img.zip ./openwrt-r2s-squashfs-img
 }
 
 function auto() {
