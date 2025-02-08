@@ -1,0 +1,66 @@
+name: OpenWrt Firmware For r5s
+ 
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/pipeline.yml"
+      - "files/*"
+      - "patches/*"
+      - "action.sh"
+      - "config"
+      - "feeds.conf.default"
+  schedule:
+    - cron: '00 18 * * 5'
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: Clean workspace
+        run: |
+          ./action.sh cleanup
+
+      - name: Init system
+        run: |
+          ./action.sh init
+
+      - name: Build firmware
+        run: |
+          ./action.sh build
+
+      - name: Artifact firmware
+        run: |
+          ./action.sh artifact
+
+      - name: Set Release Name
+        id: artifact
+        run: |
+          release_tag="$(date +%Y-%m-%d)"
+          echo "release_tag=$release_tag" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        with:
+          tag_name: ${{ steps.artifact.outputs.release_tag }}
+          release_name: ${{ steps.artifact.outputs.release_tag }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset(openwrt-r5s-squashfs-img)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./openwrt-r5s-squashfs-img.zip
+          asset_name: openwrt-r5s-squashfs-img.zip
+          asset_content_type: application/zip
+
