@@ -71,8 +71,6 @@ function build() {
 	fi
 	pushd openwrt
 
-	[ -d ./package/luci-app-openclash ] || git clone --depth=1 https://github.com/vernesong/OpenClash.git ./package/luci-app-openclash
-
 	./scripts/feeds update -a
 	./scripts/feeds install -a
 	if [ -d ../patches ]; then
