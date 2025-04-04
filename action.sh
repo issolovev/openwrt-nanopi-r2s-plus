@@ -66,13 +66,26 @@ function build() {
 		popd
 	else
 		git clone https://github.com/openwrt/openwrt.git ./openwrt
-		# git clone https://github.com/coolsnowwolf/lede.git ./openwrt
 		[ -f ./feeds.conf.default ] && cat ./feeds.conf.default >>./openwrt/feeds.conf.default
 	fi
+
+ 	if [ -d lede ]; then
+		pushd lede
+		git pull
+		popd
+	else
+		git clone https://github.com/coolsnowwolf/lede.git ./lede
+	fi
+ 
 	pushd openwrt
+
+	cp -fr ../lede/target/linux/rockchip/files ./target/linux/rockchip/files
+
+ 	ls ./target/linux/rockchip/files
 
 	./scripts/feeds update -a
 	./scripts/feeds install -a
+ 
 	if [ -d ../patches ]; then
 		git apply --check ../patches/*.patch
 		if [ $? -eq 0 ]; then
