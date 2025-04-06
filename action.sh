@@ -63,9 +63,11 @@ function build() {
 	if [ -d openwrt ]; then
 		pushd openwrt
 		git pull
+                git checkout v24.10.0
 		popd
 	else
 		git clone https://github.com/openwrt/openwrt.git ./openwrt
+                git checkout v24.10.0
 		[ -f ./feeds.conf.default ] && cat ./feeds.conf.default >>./openwrt/feeds.conf.default
 	fi
 
